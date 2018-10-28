@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .head {
+            position: absolute;
+            height: 50px;
+            width: 50px;
+            border-radius: 100%;
+            background-color: green;
+        }
+
+        .body {
+            position: absolute;
+            background: blue;
+            height: 50px;
+            width: 50px;
+        }
+
+        #head {
+            position: absolute
+        }
+
+        .food {
+            position: absolute;
+            height: 50px;
+            width: 50px;
+            background-color: yellow;
+            border-radius: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <div id="head" class="head"></div>
+        <div class="body"></div>
+    </div>
+</body>
+<script>
+    let head = document.getElementById("head");
+    let body = document.getElementsByClassName("body");
+    let foods = document.getElementsByClassName("food");
+    let headPos = head.getBoundingClientRect();
+    let oldPosX = 0;
+    let oldPosY = 0;
+    let newElem;
+    let counter = 3;
+    let x = 0;
+    let y = 0;
+    let direction = "none";
+    let wrap = document.getElementById("wrap");
+    window.addEventListener("keydown", (e) => {
+        if (e.keyCode === 37) {
+            direction = "l";
+        }
+        if (e.keyCode === 39) {
+            direction = "r"; relative
+        }
+        if (e.keyCode === 38) {
+            direction = "u";
+        }
+        if (e.keyCode === 40) {
+            direction = "d";
+        }
+    })
+    let inter = setInterval(() => {
+        if (direction === "r") {
+            x += 50;
+            head.style.transform = `translate(${x}px,${y}px)`;
+        }
+        if (direction === "l") {
+            x -= 50;
+            head.style.transform = `translate(${x}px,${y}px)`;
+        }
+        if (direction === "u") {
+            y -= 50;
+            head.style.transform = `translate(${x}px,${y}px)`;
+        }
+        if (direction === "d") {
+            y += 50;
+            head.style.transform = `translate(${x}px,${y}px)`;
+        }
+
+        if (counter % 8 === 0) {
+            let food = document.createElement("div");
+            food.setAttribute("class", "food");
+            wrap.appendChild(food);
+            food.style.transform = `translate(${(Math.floor(Math.random() * 26) * 50)}px,${(Math.floor(Math.random() * 16) * 50)}px)`;
+        }
+
+        counter++;
+        for (let i = 0; i < foods.length; i++) {
+            if (foods[i].getBoundingClientRect().top === headPos.top && foods[i].getBoundingClientRect().left === headPos.left) {
+                newElem = document.createElement("div");
+                newElem.setAttribute("class", "body");
+                wrap.appendChild(newElem);
+                newElem.style.transform = `translate(${body[body.length - 1].getBoundingClientRect().left}px,${body[body.length - 1].getBoundingClientRect().right}px)`;
+                foods[i].parentElement.removeChild(foods[i]);
+            }
+        }
+
+        for (let i = 0; i < body.length; i++) {
+            let newPosX = oldPosX;
+            let newPosY = oldPosY;
+            oldPosX = body[i].getBoundingClientRect().left;
+            oldPosY = body[i].getBoundingClientRect().top;
+            if (i > 0) {
+                body[i].style.transform = `translate(${newPosX - 8}px,${newPosY - 8}px)`;
+                if (headPos.top === body[i].getBoundingClientRect().top && headPos.left === body[i].getBoundingClientRect().left && counter > 10) {
+
+                    clearInterval(inter);
+                    alert("Game Over")
+                }
+            }
+            // if (i > 0) {
+            //     body[i].style.transform = `translate(${x})`
+            // }
+            body[0].style.transform = `translate(${headPos.left - 8}px,${headPos.top - 8}px)`;
+            body[0].style.backgroundColor = "pink";
+            if (body[1]) {
+                body[1].style.backgroundColor = "purple";
+            }
+
+        }
+
+        headPos = head.getBoundingClientRect();
+
+        if (y < 0) {
+            y = 950;
+            head.style.transform = `translate(${x}px,${y}px)`;
+            headPos = head.getBoundingClientRect();
+        }
+
+        if (y > 950) {
+            y = 0;
+            head.style.transform = `translate(${x}px,${y}px)`;
+            headPos = head.getBoundingClientRect();
+        }
+        if (x < 0) {
+            x = 1400;
+            head.style.transform = `translate(${x}px,${y}px)`;
+            headPos = head.getBoundingClientRect();
+        }
+        if (x > 1400) {
+            x = 0;
+            head.style.transform = `translate(${x}px,${y}px)`;
+            headPos = head.getBoundingClientRect();
+        }
+
+
+
+    }, 500);
+</script>
+
+</html>
